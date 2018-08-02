@@ -1,4 +1,4 @@
-language: cpp
+language: generic
 #before_script:
 #  - sudo apt-get install libboost-test-dev -y
 mtrix:
