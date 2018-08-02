@@ -1,0 +1,15 @@
+language: cpp
+#before_script:
+#  - sudo apt-get install libboost-test-dev -y
+script:
+  - cmake .
+  - cmake --build .
+  - cmake --build . --target package
+before_deploy: 
+  - 'export _PROJECT_VERSION=`grep -Eo "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" version.cpp`'
+deploy:
+  provider: script
+  skip_cleanup: true
+  script:
+  - '! curl -T allocator-${_PROJECT_VERSION}-Linux.deb -uboydad:$BINTRAY_API_KEY "https://api.bintray.com/content/boydad/otus-cpp/8-allocator/${_PROJECT_VERSION}/allocator/allocator-${_PROJECT_VERSION}-Linux.deb;deb_distribution=trusty;deb_component=main;deb_architecture=amd64;publish=1" | grep -v success'
+
