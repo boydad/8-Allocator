@@ -1,6 +1,17 @@
 language: cpp
 #before_script:
 #  - sudo apt-get install libboost-test-dev -y
+mtrix:
+  include:
+    - os: linux
+      env: COMPILER_NAME=gcc CXX=g++-5 CC=gcc-5
+      addons:
+        apt:
+          packages:
+            - g++-5
+          sources: &sources
+            - llvm-toolchain-precise-3.8
+            - ubuntu-toolchain-r-test
 script:
 #  - cmake .
   - cmake -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON .
