@@ -1,7 +1,7 @@
 language: generic
 #before_script:
 #  - sudo apt-get install libboost-test-dev -y
-mtrix:
+matrix:
   include:
     - os: linux
       env: COMPILER_NAME=gcc CXX=g++-5 CC=gcc-5
