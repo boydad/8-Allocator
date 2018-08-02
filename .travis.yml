@@ -2,7 +2,8 @@ language: cpp
 #before_script:
 #  - sudo apt-get install libboost-test-dev -y
 script:
-  - cmake .
+#  - cmake .
+  - cmake -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON .
   - cmake --build .
   - cmake --build . --target package
 before_deploy: 
