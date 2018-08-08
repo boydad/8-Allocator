@@ -1,11 +1,8 @@
 #include <iostream>
-#include <vector>
 #include <map>
 #include <cmath>
-#include "version.h"
 #include "allocator.h"
 #include "container.h"
-#include "xray.h"
 
 template <class Cont, class Lambda>
 void fillContainer(Cont& c, Lambda lamb){
