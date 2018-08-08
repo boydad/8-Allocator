@@ -1,19 +1,14 @@
+#pragma once
+
 #include <memory>
 #include <ostream>
-
-template<class T>
-struct Node {
-  T value;
-  Node<T>* next;
-
-  Node(const T& v, Node<T>* n) : value(v), next(n) {};
-};
 
 template<class T, class Allocator = std::allocator<T> >
 class Container {
 public:
 
-  Container() : head(nullptr) {}
+  Container(): head(nullptr) {}
+  
   Container(const Container<T, Allocator>& c) = delete;
   ~Container() {
     while (head) {
@@ -24,17 +19,38 @@ public:
     }
 
   }
+  
   Container<T, Allocator>& operator=(const Container<T, Allocator>& c) = delete;
 
-  void pushBack(const T& other) {
-    Node<T>* newHead = alloc.allocate(1);
-    std::allocator_traits <decltype(alloc)>::construct(alloc, newHead, other, head);
+  template <class... Args>
+  decltype(auto) emplaceFront(Args&&... args){
+    Node* newHead = alloc.allocate(1);
+    std::allocator_traits <decltype(alloc)>::construct(alloc, newHead, head, 
+                                                   std::forward<Args>(args)...);
     head = newHead;
+    return (*head);
   }
-
+    
+  void pushFront(const T& other) {
+    this->emplaceFront(other);
+  }
+  
+  void pushFront(T&& other){
+    this->emplaceFront(std::move(other));
+  }
+  
+  struct Node {
+    Node* next;
+    T value;    
+    
+    template <class... Args>
+    Node(Node* n, Args&&... args): next(n), value(std::forward<Args>(args)...) {}
+  };
+  
+  
   struct Iterator {
 
-    Iterator(Node<T>* p) : ptr(p) {};
+    Iterator(Node* p) : ptr(p) {};
     
     bool operator!=(const Iterator& other) const{
       return !(*this == other);
@@ -48,14 +64,14 @@ public:
       ptr = ptr->next;
     }
     
-    //refferenc or value???
     decltype(auto) operator*() const{
       return (ptr->value);
     }
 
   private:
-    Node<T>* ptr;
+    Node* ptr;
   };
+  
   
   Iterator begin() const{
     return Iterator(head);
@@ -66,13 +82,13 @@ public:
   }
 
 private:
-  typename Allocator::template rebind< Node<T> >::other alloc;
-  Node<T>* head;
+  typename Allocator::template rebind< Node >::other alloc;
+  Node* head;
 };
 
 template<class... Args>
 std::ostream& operator<<(std::ostream& os, const Container<Args...>& cont){
   for(const auto& elem: cont)
-    os<<elem<<'\n';
+    os << elem << '\n';
   return os;
 }
